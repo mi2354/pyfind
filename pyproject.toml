@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=42", "wheel", "toml"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "py-find"
+dynamic = ['version']
+description = "Python implementation of the find command with some additional features"
+readme = "README.md"
+requires-python = ">=3.6"
+
+[tool.setuptools.dynamic]
+version = {attr = "pyfind.__version__"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[project.scripts]
+pyfind = "pyfind.main:main"
+
+[tool.black]
+line-length = 99
+target-version = ['py310']
+
+[tool.isort]
+profile = "black"
