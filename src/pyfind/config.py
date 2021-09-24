@@ -26,25 +26,21 @@ def get_parser():
     parser.add_argument(
         "--min-modified-time",
         type=str,
-        action="append",
         help="The minimum value for the modification time of the file",
     )
     parser.add_argument(
         "--max-modified-time",
         type=str,
-        action="append",
         help="The maximum value for the modification time of the file",
     )
     parser.add_argument(
         "--max-size",
         type=int,
-        action="append",
         help="The maximum filesize in MB",
     )
     parser.add_argument(
         "--min-size",
         type=int,
-        action="append",
         help="The minimum filesize in MB",
     )
     parser.add_argument(
@@ -86,12 +82,13 @@ class Config:
 
     @classmethod
     def build_config_from_arguments(cls, arguments: Namespace):
+        print(arguments)
         return cls(
             path=arguments.path,
             name=arguments.name,
             mtime_max=cls._strdate_to_unix_time(arguments.max_modified_time),
             mtime_min=cls._strdate_to_unix_time(arguments.min_modified_time),
-            max_size=cls._update_size_to_kb(arguments.max_size),
-            min_size=cls._update_size_to_kb(arguments.min_size),
+            max_size=cls._update_size_to_bytes(arguments.max_size),
+            min_size=cls._update_size_to_bytes(arguments.min_size),
             depth=arguments.depth,
         )

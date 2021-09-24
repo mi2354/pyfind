@@ -2,7 +2,7 @@ import argparse
 import os
 import re
 from dataclasses import dataclass
-from typing import Generator
+from typing import Generator, Optional
 
 from pyfind.config import Config
 
@@ -24,7 +24,7 @@ def get_file_info_object(path: str) -> FileInfo:
     return FileInfo(filename, size_in_bytes, mtime)
 
 
-def _condition_name(filename: str, config_pattern: str) -> bool:
+def _condition_name(filename: str, config_pattern: Optional[str]) -> bool:
     """
     Check if the given pattern (word or regular expression) matches the word.
 
@@ -35,6 +35,8 @@ def _condition_name(filename: str, config_pattern: str) -> bool:
     Returns:
         bool: True if the pattern matches the word, False otherwise.
     """
+    if config_pattern is None:
+        return True
 
     # If the pattern is an exact word
     if FULL_PATTERN.fullmatch(config_pattern):
@@ -45,7 +47,9 @@ def _condition_name(filename: str, config_pattern: str) -> bool:
     return bool(match)
 
 
-def _condition_multiple(file_attribute: int, config_max: int, config_min: int) -> bool:
+def _condition_multiple(
+    file_attribute: int, config_max: Optional[int], config_min: Optional[int]
+) -> bool:
     return (config_max is None or config_max >= file_attribute) and (
         config_min is None or config_min <= file_attribute
     )
@@ -75,7 +79,7 @@ def get_filepaths_recursively_os(path: str, depth: int) -> Generator[str, None, 
         for element in os.scandir(path):
             if os.path.isfile(element):
                 yield element.path
-            else:
+            elif os.path.isdir(element):
                 yield from get_filepaths_recursively_os(
                     os.path.join(path, element.name), depth - 1
                 )
